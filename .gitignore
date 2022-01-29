@@ -2,10 +2,7 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/PythonApplication1/.vs/RobotApp/v16/.suo
-/PythonApplication1/.vs/PythonApplication1/v16/.suo
-/.vs/RobotApp/v16/.suo
-/.vs/ProjectSettings.json
-/.vs/slnx.sqlite
 /.vs/VSWorkspaceState.json
-/PythonApplication1/.vs/PythonApplication1/v16/.suo~Adding full python file
+/.vs/slnx.sqlite
+/.vs/ProjectSettings.json
+/.vs/RobotApp/v16/.suo
