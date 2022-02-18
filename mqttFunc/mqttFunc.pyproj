@@ -2,17 +2,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>4787f81c-2e6d-4903-a672-5db3e9ebc6c0</ProjectGuid>
-    <ProjectHome>
-    </ProjectHome>
-    <StartupFile>RobotApp.py</StartupFile>
+    <ProjectGuid>5ff26c87-53eb-40e6-854d-5bafaa03e289</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>mqttFunc.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>RobotApp</Name>
-    <RootNamespace>PythonApplication1</RootNamespace>
-    <IsWindowsApplication>False</IsWindowsApplication>
+    <Name>mqttFunc</Name>
+    <RootNamespace>mqttFunc</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,10 +21,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="service.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="RobotApp.py" />
+    <Compile Include="mqttFunc.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
