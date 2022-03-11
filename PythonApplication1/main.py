@@ -3,17 +3,38 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.button import Button
 from plyer import notification
 import time
 from kivy.utils import platform
+from kivy.clock import Clock
+from kivy.properties import ObjectProperty
+
 
 
 class mainMenu(Screen):
-    pass
+	pass
 
 class robotFiles(Screen):
-    pass
+	view = ObjectProperty(None)
+	def __init__(self, **kwargs):
+		super(Screen, self).__init__(**kwargs)
+		Clock.schedule_once(self.createScrollView)
+		
+	def createScrollView(self, dt):
+		test = ["element {}".format(i) for i in range(40)]
+		layout = GridLayout(cols=1, size_hint_y=None, row_default_height=200)
+		layout.bind(minimum_height=layout.setter("height"))
+		
+		for element in test:
+			layout.add_widget(Button(text=element))
+		scrollview = ScrollView()
+		scrollview.add_widget(layout)
+		self.view.add_widget(scrollview)
+	
+
 
 class controlApp(App):
 
@@ -38,7 +59,6 @@ class controlApp(App):
             service.start(self.mActivity, argument)
             print("service Started!")
 
- 
 kv = controlApp()
 kv.run()
 
