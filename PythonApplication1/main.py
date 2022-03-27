@@ -49,13 +49,20 @@ class controlApp(App):
         return sm
 
     def viewFiles(self):
-        notification.notify(title='notifyTest', message='isThisWorking?')
-        ssh_client = paramiko.SSHClinet()
+        ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client_connect("192.168.0.186", 22, username="tw", password="Barbedone2#")
-        stdin, stdout, stderr = ssh_client.exec_comm("ls ~/desktop")
-        stdin, stdout, stderr = ssh_client.exec_comm("touch test")
-        ssh_client.close()
+        try:
+        	notification.notify(title='notifyTest', message='isThisStillWorking?')
+        	ssh_client_connect("192.168.0.186", 22, username="tw", password="Barbedone2#")
+        	ssh_client.close()
+        except:
+        	#notification.notify(title='notifyTest', message='oof')	
+        	pass
+        #stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
+        #stdin, stdout, stderr = ssh_client.exec_comm("ls")
+        #otherStuff = stdout.read()
+        #notification.notify(title='notifyTest', message=otherStuff)
+
 
     def startservice(self, *args):
         if platform == "android":
