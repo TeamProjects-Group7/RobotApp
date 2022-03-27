@@ -11,6 +11,7 @@ import time
 from kivy.utils import platform
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty
+import paramiko
 
 
 
@@ -49,6 +50,12 @@ class controlApp(App):
 
     def viewFiles(self):
         notification.notify(title='notifyTest', message='isThisWorking?')
+        ssh_client = paramiko.SSHClinet()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_client_connect("192.168.0.186", 22, username="tw", password="Barbedone2#")
+        stdin, stdout, stderr = ssh_client.exec_comm("ls ~/desktop")
+        stdin, stdout, stderr = ssh_client.exec_comm("touch test")
+        ssh_client.close()
 
     def startservice(self, *args):
         if platform == "android":
