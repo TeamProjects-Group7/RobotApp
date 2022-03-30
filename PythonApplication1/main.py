@@ -39,8 +39,6 @@ class robotFiles(Screen):
 
 class controlApp(App):
 
-	
-
     def build(self):
         sm = ScreenManager()
         sm.add_widget(mainMenu(name='menu'))
@@ -49,19 +47,26 @@ class controlApp(App):
         return sm
 
     def viewFiles(self):
-        ssh_client = paramiko.SSHClient()
+        ssh_client = paramiko.SSHClient()        
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        
         try:
-        	notification.notify(title='notifyTest', message='isThisStillWorking?')
-        	ssh_client_connect("192.168.0.186", 22, username="tw", password="Barbedone2#")
+        	ssh_client.connect('69.133.110.234',username='robot',password='gasbotsensor48', port=51732)
+        	#stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
+        	stdin, stdout, stderr = ssh_client.exec_command("ls -a")
+        	otherStuff = stdout.read().decode('ascii').strip("\n")
         	ssh_client.close()
+
+        	notification.notify(title='notifyTest', message=otherStuff)
+        except paramiko.AuthenticationException:
+        	notification.notify(title='notifyTest', message='Auth')	
+        except paramiko.SSHException:
+        	notification.notify(title='notifyTest', message='SSH')
+        except paramiko.BadHostKeyException:
+        	notification.notify(title='notifyTest', message='BadHost')
         except:
-        	#notification.notify(title='notifyTest', message='oof')	
-        	pass
-        #stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
-        #stdin, stdout, stderr = ssh_client.exec_comm("ls")
-        #otherStuff = stdout.read()
-        #notification.notify(title='notifyTest', message=otherStuff)
+        	notification.notify(title='notifyTest', message='NoIdea')
+        
 
 
     def startservice(self, *args):
