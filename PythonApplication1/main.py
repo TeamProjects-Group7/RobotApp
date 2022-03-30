@@ -51,7 +51,7 @@ class controlApp(App):
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
         try:
-        	ssh_client.connect('69.133.110.234',username='robot',password='gasbotsensor48', port=51732)
+        	ssh_client.connect('ipaddress',username=username,password=password, port=portnumber)
         	#stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
         	stdin, stdout, stderr = ssh_client.exec_command("ls -a")
         	otherStuff = stdout.read().decode('ascii').strip("\n")
