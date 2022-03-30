@@ -3,10 +3,6 @@ import time
 from plyer import notification
 from paho.mqtt import client as mqtt
 
-#broker = 'broker.emqx.io'
-#port = 1883
-#username = 'group7robot'
-#password = 'thisisntsecureohwell'
 
 def on_message(client, userdata, message):
 	incoming = str(message.payload.decode("utf-8"))
@@ -25,15 +21,6 @@ def on_connect(client, userdata, flags, rc):
 
 PythonService = autoclass('org.kivy.android.PythonService')
 
-
-#PythonService.mService.setAutoRestartService(True)
-print("service Started")
-#notification.notify(title='myService', message=str("Service Started"))
-#client = mq.getClient()
-#def on_message(client, userdata, msg):
-#notification.notify(title='AlertStatus',message=str({msg.payload.decode()}))
-#subscriber = mq.subscribe(on_message, Topic.ALERT_ON)
-#mq.publish(client, 1, Topic.ALERT_ON)
 
 client = mqtt.Client("my_client")
 broker_address = "broker.hivemq.com"
