@@ -11,6 +11,7 @@ import time
 from kivy.utils import platform
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty
+import paramiko
 
 
 
@@ -38,8 +39,6 @@ class robotFiles(Screen):
 
 class controlApp(App):
 
-	
-
     def build(self):
         sm = ScreenManager()
         sm.add_widget(mainMenu(name='menu'))
@@ -48,7 +47,27 @@ class controlApp(App):
         return sm
 
     def viewFiles(self):
-        notification.notify(title='notifyTest', message='isThisWorking?')
+        ssh_client = paramiko.SSHClient()        
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        
+        try:
+        	ssh_client.connect('ipaddress',username=username,password=password, port=portnumber)
+        	#stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
+        	stdin, stdout, stderr = ssh_client.exec_command("ls -a")
+        	otherStuff = stdout.read().decode('ascii').strip("\n")
+        	ssh_client.close()
+
+        	notification.notify(title='notifyTest', message=otherStuff)
+        except paramiko.AuthenticationException:
+        	notification.notify(title='notifyTest', message='Auth')	
+        except paramiko.SSHException:
+        	notification.notify(title='notifyTest', message='SSH')
+        except paramiko.BadHostKeyException:
+        	notification.notify(title='notifyTest', message='BadHost')
+        except:
+        	notification.notify(title='notifyTest', message='NoIdea')
+        
+
 
     def startservice(self, *args):
         if platform == "android":

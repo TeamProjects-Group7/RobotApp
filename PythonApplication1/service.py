@@ -22,24 +22,21 @@ def on_connect(client, userdata, flags, rc):
 PythonService = autoclass('org.kivy.android.PythonService')
 
 
-
-notification.notify(title='myService', message=str("Service Started"))
-
-
 client = mqtt.Client("my_client")
 broker_address = "broker.hivemq.com"
 client.on_message=on_message
 client.on_connect=on_connect
 client.connect(broker_address)
 client.loop_start()
-notification.notify(title='myService', message=str("Before Subscription"))
+#notification.notify(title='myService', message=str("Before Subscription"))
 client.subscribe("RobotTest")
-client.publish("RobotTest", "Working")
+#client.publish("RobotTest", "Working")
 
-for x in range(6):
-	client.publish("RobotTest", "Working")
-	time.sleep(3)
+#Test Publishing
+#for x in range(6):
+#	client.publish("RobotTest", "Working")
+#	time.sleep(3)
 	
 time.sleep(4)
 client.loop_stop()
-notification.notify(title='myService', message=str("Service Ended"))
+#notification.notify(title='myService', message=str("Service Ended"))
