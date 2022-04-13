@@ -99,6 +99,7 @@ class controlApp(App):
         
         try:
         	ssh_client.connect('10.16.22.87',username='pi',password='group7sp')
+
         	#stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
         	stdin, stdout, stderr = ssh_client.exec_command("ls -a")
         	otherStuff = stdout.read().decode('ascii').strip("\n")

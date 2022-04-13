@@ -5,8 +5,6 @@ from paho.mqtt import client as mqtt
 
 
 
-
-
 def on_message(client, userdata, message):
 	incoming = str(message.payload.decode("utf-8"))
 	notification.notify(title='myService', message=str(incoming))
@@ -29,6 +27,7 @@ def on_connect(client, userdata, flags, rc):
 PythonService = autoclass('org.kivy.android.PythonService')
 
 
+
 #PythonService.mService.setAutoRestartService(True)
 #notification.notify(title='myService', message=str("Service Started"))
 #client = mq.getClient()
@@ -36,8 +35,6 @@ PythonService = autoclass('org.kivy.android.PythonService')
 #notification.notify(title='AlertStatus',message=str({msg.payload.decode()}))
 #subscriber = mq.subscribe(on_message, Topic.ALERT_ON)
 #mq.publish(client, 1, Topic.ALERT_ON)
-
-
 
 client = mqtt.Client("my_client")
 broker_address = "broker.hivemq.com"
