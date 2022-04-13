@@ -12,6 +12,7 @@ from kivy.utils import platform
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty
 import paramiko
+from paho.mqtt import client as mqtt
 
 
 
@@ -45,13 +46,59 @@ class controlApp(App):
         sm.add_widget(robotFiles(name='files'))
         self.startservice()
         return sm
+        
+    def on_message(self, client, userdata, message):
+    	incoming = str(message.payload.decode("utf-8"))
+    	notification.notify(title='myService', message=str(incoming))
+    	print("message received " ,str(message.payload.decode("utf-8")))
+    	print("message topic=",message.topic)
+    	print("message qos=",message.qos)
+    	print("message retain flag=",message.retain)
+	
+    def on_connect(self, client, userdata, flags, rc):
+    	if rc == 0:
+    		notification.notify(title='myService', message='connected successfuly')
+    	else:
+    		notification.notify(title='myService', message='failed to connect')
+
+    def setIdleOff(self):
+    	client = mqtt.Client("newClient1")
+    	broker_address = "broker.hivemq.com"
+    	client.on_message=self.on_message
+    	client.on_connect=self.on_connect
+#client.username_pw_set(username="group7robot", password="thisisntsecureohwell")
+    	client.connect(broker_address)
+    	time.sleep(4)
+    	client.publish("ROBOT_IDLE", "notidling")
+	
+    def setIdleOn(self):
+    	client = mqtt.Client("newClient2")
+    	broker_address = "broker.hivemq.com"
+    	client.on_message=self.on_message
+    	client.on_connect=self.on_connect
+#client.username_pw_set(username="group7robot", password="thisisntsecureohwell")
+    	client.connect(broker_address)
+    	time.sleep(4)
+    	client.publish("ROBOT_IDLE", "idling")
+
+	
+    def turnOffAlert(self):
+    	client = mqtt.Client("newClient3")
+    	broker_address = "broker.hivemq.com"
+    	client.on_message=self.on_message
+    	client.on_connect=self.on_connect
+#client.username_pw_set(username="group7robot", password="thisisntsecureohwell")
+    	client.connect(broker_address)
+    	time.sleep(4)
+    	client.publish("ROBOT_ALERT", "false")
+
 
     def viewFiles(self):
         ssh_client = paramiko.SSHClient()        
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
         try:
-        	ssh_client.connect('69.133.110.234',username='robot',password='gasbotsensor48', port=51732)
+        	ssh_client.connect('10.16.22.87',username='pi',password='group7sp')
         	#stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
         	stdin, stdout, stderr = ssh_client.exec_command("ls -a")
         	otherStuff = stdout.read().decode('ascii').strip("\n")
@@ -74,9 +121,8 @@ class controlApp(App):
             from jnius import autoclass
             service = autoclass('org.kivy.myapp.ServiceMyservice')
             self.mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
-            argument = ''
-            service.start(self.mActivity, argument)
-            print("service Started!")
+            service.start(self.mActivity, '')
+            
 
 kv = controlApp()
 kv.run()
