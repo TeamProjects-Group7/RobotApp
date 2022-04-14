@@ -13,6 +13,14 @@ from kivy.clock import Clock
 from kivy.properties import ObjectProperty
 import paramiko
 from paho.mqtt import client as mqtt
+from android.permissions import request_permissions, Permission
+
+
+if platform == 'android':
+	from android.storage import primary_external_storage_path
+	dir = primary_external_storage_path()
+	download_dir_path = os.path.join(dir, 'Download')
+	request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
 
 
 
@@ -90,7 +98,7 @@ class controlApp(App):
 #client.username_pw_set(username="group7robot", password="thisisntsecureohwell")
     	client.connect(broker_address)
     	time.sleep(4)
-    	client.publish("ROBOT_ALERT", "false")
+    	client.publish("ALERT_OFF", "false")
 
 
     def viewFiles(self):
@@ -98,9 +106,15 @@ class controlApp(App):
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
         try:
-        	ssh_client.connect('10.16.22.87',username='pi',password='group7sp')
+        	ssh_client.connect(hostname='69.133.110.234',port=51732,username='robot',password='gasbotsensor48')
         	#stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
-        	stdin, stdout, stderr = ssh_client.exec_command("ls -a")
+        	#Testing sftp
+        	stdin, stdout, stderr = ssh_client.exec_command("touch test1.txt")
+        	sftp = ssh_client.open_sftp()
+        	localpath = download_dir_path
+        	remotepath = '/home/robot/test1.txt'
+        	sftp.get(remotepath, localpath)
+        	sftp.close()
         	otherStuff = stdout.read().decode('ascii').strip("\n")
         	ssh_client.close()
 
@@ -111,8 +125,8 @@ class controlApp(App):
         	notification.notify(title='notifyTest', message='SSH')
         except paramiko.BadHostKeyException:
         	notification.notify(title='notifyTest', message='BadHost')
-        except:
-        	notification.notify(title='notifyTest', message='NoIdea')
+        except Exception as e:
+        	notification.notify(title='notifyTest', message=str(e))
         
 
 
