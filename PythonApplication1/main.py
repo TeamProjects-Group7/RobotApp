@@ -106,7 +106,8 @@ class controlApp(App):
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
         try:
-        	ssh_client.connect(hostname='69.133.110.234',port=51732,username='robot',password='gasbotsensor48')
+
+        	ssh_client.connect('10.16.22.87',username='pi',password='group7sp')
         	#stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
         	#Testing sftp
         	stdin, stdout, stderr = ssh_client.exec_command("touch test1.txt")
