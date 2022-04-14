@@ -44,7 +44,7 @@ client.on_connect=on_connect
 client.connect(broker_address)
 
 
-client.subscribe([("ROBOT_IDLE", 0), ("ROBOT_ALERT", 0)])
+client.subscribe([("ROBOT_IDLE", 0), ("ALERT_ON", 0)])
 time.sleep(4)
 #client.publish("ROBOT_IDLE", "false")
 client.loop_forever()
