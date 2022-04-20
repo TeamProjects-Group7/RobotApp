@@ -1,3 +1,4 @@
+from __future__ import print_function
 import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -14,6 +15,8 @@ from kivy.properties import ObjectProperty
 import paramiko
 from paho.mqtt import client as mqtt
 from android.permissions import request_permissions, Permission
+from functools import partial
+
 
 
 if platform == 'android':
@@ -31,18 +34,61 @@ class robotFiles(Screen):
 	view = ObjectProperty(None)
 	def __init__(self, **kwargs):
 		super(Screen, self).__init__(**kwargs)
+		self.ssh_client = paramiko.SSHClient()
+		self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		Clock.schedule_once(self.createScrollView)
 		
 	def createScrollView(self, dt):
-		test = ["element {}".format(i) for i in range(40)]
-		layout = GridLayout(cols=1, size_hint_y=None, row_default_height=200)
-		layout.bind(minimum_height=layout.setter("height"))
-		
-		for element in test:
-			layout.add_widget(Button(text=element))
-		scrollview = ScrollView()
-		scrollview.add_widget(layout)
-		self.view.add_widget(scrollview)
+		try:
+			test = self.viewFiles()
+			layout = GridLayout(cols=1, size_hint_y=None, row_default_height=200)
+			layout.bind(minimum_height=layout.setter("height"))
+			
+			for element in test:
+				btn = Button(text=element)
+				btn.bind(on_release=self.downloadFile)
+				layout.add_widget(btn)
+			scrollview = ScrollView()
+			scrollview.add_widget(layout)
+			self.view.add_widget(scrollview)
+		except Exception as e:
+			notification.notify(title='notifyTest',message=str(e))
+	
+	def viewFiles(self):
+        
+        	try:
+        		self.ssh_client.connect(hostname='10.16.22.87',username='pi',password='group7sp')
+        	#stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
+        	#Testing sftp
+        		stdin, stdout, stderr = self.ssh_client.exec_command("ls")
+        		otherStuff = stdout.read().decode('ascii').strip("\n")
+        		newStuff = str(otherStuff).split()
+        		self.ssh_client.close()
+        	
+        		notification.notify(title='notifyTest', message=otherStuff)
+        	except paramiko.AuthenticationException:
+        		notification.notify(title='notifyTest', message='Auth')	
+        	except paramiko.SSHException:
+        		notification.notify(title='notifyTest', message='SSH')
+        	except paramiko.BadHostKeyException:
+        		notification.notify(title='notifyTest', message='BadHost')
+        	except Exception as e:
+        		notification.notify(title='notifyTest', message=str(e))
+        		return ['error', 'in', 'connection']
+        	return newStuff
+	
+	def downloadFile(self, instance):
+		try:
+			self.ssh_client.connect(hostname='10.16.22.87',username='pi',password='group7sp')
+			sftp = self.ssh_client.open_sftp()
+			localpath = download_dir_path + '/' + instance.text
+			notification.notify(title='downloadtest', message=localpath)
+			remotepath = '/home/pi/Development/TeamProjects_Robot/Data/' + instance.text
+			sftp.get(remotepath, localpath)
+			sftp.close()
+			self.ssh_client.close()
+		except Exception as e:
+			notification.notify(title='downloadTest', message=str(e))
 	
 
 
@@ -99,36 +145,6 @@ class controlApp(App):
     	client.connect(broker_address)
     	time.sleep(4)
     	client.publish("ALERT_OFF", "false")
-
-
-    def viewFiles(self):
-        ssh_client = paramiko.SSHClient()        
-        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        
-        try:
-        	ssh_client.connect(hostname='69.133.110.234',port=51732,username='robot',password='gasbotsensor48')
-        	#stdin, stdout, stderr = ssh_client.exec_comm("cd ~/desktop")
-        	#Testing sftp
-        	stdin, stdout, stderr = ssh_client.exec_command("touch test1.txt")
-        	sftp = ssh_client.open_sftp()
-        	localpath = download_dir_path
-        	remotepath = '/home/robot/test1.txt'
-        	sftp.get(remotepath, localpath)
-        	sftp.close()
-        	otherStuff = stdout.read().decode('ascii').strip("\n")
-        	ssh_client.close()
-
-        	notification.notify(title='notifyTest', message=otherStuff)
-        except paramiko.AuthenticationException:
-        	notification.notify(title='notifyTest', message='Auth')	
-        except paramiko.SSHException:
-        	notification.notify(title='notifyTest', message='SSH')
-        except paramiko.BadHostKeyException:
-        	notification.notify(title='notifyTest', message='BadHost')
-        except Exception as e:
-        	notification.notify(title='notifyTest', message=str(e))
-        
-
 
     def startservice(self, *args):
         if platform == "android":
